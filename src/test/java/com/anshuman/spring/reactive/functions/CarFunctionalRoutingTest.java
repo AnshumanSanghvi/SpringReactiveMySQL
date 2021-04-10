@@ -1,9 +1,9 @@
 package com.anshuman.spring.reactive.functions;
 
 import com.anshuman.spring.reactive.SpringReactiveMySqlApplication;
-import com.anshuman.spring.reactive.model.Vehicle;
-import com.anshuman.spring.reactive.repository.VehicleReactiveRepository;
-import com.anshuman.spring.reactive.service.VehicleReactiveService;
+import com.anshuman.spring.reactive.model.Car;
+import com.anshuman.spring.reactive.repository.CarReactiveRepository;
+import com.anshuman.spring.reactive.service.CarReactiveService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -31,84 +31,84 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = SpringReactiveMySqlApplication.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Disabled // to run the tests, remove the command line runner bean from main App.
-class VehicleFunctionalRoutingTest {
+class CarFunctionalRoutingTest {
 
     @Autowired
-    private VehicleReactiveService vehicleReactiveService;
+    private CarReactiveService carReactiveService;
 
     @Autowired
-    private VehicleFunctionalRouting vehicleRouting;
+    private CarFunctionalRouting carRouting;
 
     @MockBean
-    private VehicleReactiveRepository vehicleRepository;
+    private CarReactiveRepository carRepository;
 
     @Test
     @Order(1)
-    public void givenVehicleId_whenGetVehicleById_thenCorrectVehicle() {
+    public void givenCarId_whenGetCarById_thenCorrectCar() {
         WebTestClient client = WebTestClient
-                .bindToRouterFunction(vehicleRouting.getVehicleByIdRoute())
+                .bindToRouterFunction(carRouting.getCarByIdRoute())
                 .build();
 
-        Vehicle vehicle = new Vehicle(1, "Ford", "Mustang", "Red");
+        Car car = new Car(1, "Ford", "Mustang", "Red");
 
-        given(vehicleRepository.findById(1)).willReturn(Mono.just(vehicle));
+        given(carRepository.findById(1)).willReturn(Mono.just(car));
 
         client.get()
                 .uri(uriBuilder -> uriBuilder.path(byId.getPath()).build(1))
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(Vehicle.class)
-                .isEqualTo(vehicle);
+                .expectBody(Car.class)
+                .isEqualTo(car);
     }
 
     @Test
     @Order(2)
-    public void whenGetAllVehicles_thenCorrectVehicles() {
+    public void whenGetAllCars_thenCorrectCars() {
         WebTestClient client = WebTestClient
-                .bindToRouterFunction(vehicleRouting.getAllVehiclesRoute())
+                .bindToRouterFunction(carRouting.getAllCarsRoute())
                 .build();
 
-        List<Vehicle> vehicles = Arrays.asList(
-                new Vehicle(1,"Ford", "Mustang", "Red"),
-                new Vehicle(2,"Ford", "Bronco", "Orange"));
+        List<Car> cars = Arrays.asList(
+                new Car(1,"Ford", "Mustang", "Red"),
+                new Car(2,"Ford", "Bronco", "Orange"));
 
-        Flux<Vehicle> vehicleFlux = Flux.fromIterable(vehicles);
-        given(vehicleRepository.findAll()).willReturn(vehicleFlux);
+        Flux<Car> carFlux = Flux.fromIterable(cars);
+        given(carRepository.findAll()).willReturn(carFlux);
 
         client.get()
                 .uri(all.getPath())
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBodyList(Vehicle.class)
-                .isEqualTo(vehicles);
+                .expectBodyList(Car.class)
+                .isEqualTo(cars);
     }
 
     @Test
     @Order(3)
-    public void whenUpdateVehicle_thenVehicleUpdated() {
+    public void whenUpdateCar_thenCarUpdated() {
         WebTestClient client = WebTestClient
-                .bindToRouterFunction(vehicleRouting.updateVehicleRoute())
+                .bindToRouterFunction(carRouting.updateCarRoute())
                 .build();
 
-        Vehicle vehicle = new Vehicle(1, "Ford", "Mustang", "Red");
+        Car car = new Car(1, "Ford", "Mustang", "Red");
 
         client.post()
                 .uri(save.getPath())
-                .body(Mono.just(vehicle), Vehicle.class)
+                .body(Mono.just(car), Car.class)
                 .exchange()
                 .expectStatus()
                 .isOk();
 
-        verify(vehicleRepository).save(vehicle);
+        verify(carRepository).save(car);
     }
 
     @Test
     @Order(4)
-    public void givenVehicleId_whenGetVehicleByIdZero_thenForbidden() {
+    public void givenCarId_whenGetCarByIdZero_thenForbidden() {
         WebTestClient client = WebTestClient
-                .bindToRouterFunction(vehicleRouting.getVehicleByIdRoute())
+                .bindToRouterFunction(carRouting.getCarByIdRoute())
                 .build();
 
         client.get()

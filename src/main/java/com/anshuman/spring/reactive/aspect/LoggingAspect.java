@@ -13,9 +13,9 @@ import org.springframework.util.StopWatch;
 @Slf4j
 public class LoggingAspect {
 
-    @Around("execution(* com.anshuman.spring.reactive.resource.VehicleReactiveResource.*(..)) ||" +
-            "execution(* com.anshuman.spring.reactive.service.VehicleReactiveService.*(..)) ||" +
-            "execution(* com.anshuman.spring.reactive.repository.VehicleReactiveRepository.*(..)) ")
+    @Around("execution(* com.anshuman.spring.reactive.resource.CarReactiveResource.*(..)) ||" +
+            "execution(* com.anshuman.spring.reactive.service.CarReactiveService.*(..)) ||" +
+            "execution(* com.anshuman.spring.reactive.repository.CarReactiveRepository.*(..)) ")
     public Object logAllMethods(ProceedingJoinPoint joinPoint) throws Throwable
     {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();

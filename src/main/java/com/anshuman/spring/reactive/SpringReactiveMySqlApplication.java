@@ -1,7 +1,9 @@
 package com.anshuman.spring.reactive;
 
-import com.anshuman.spring.reactive.model.Vehicle;
-import com.anshuman.spring.reactive.service.VehicleReactiveService;
+import com.anshuman.spring.reactive.model.Bike;
+import com.anshuman.spring.reactive.model.Car;
+import com.anshuman.spring.reactive.service.BikeReactiveService;
+import com.anshuman.spring.reactive.service.CarReactiveService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,23 +25,42 @@ public class SpringReactiveMySqlApplication {
 	}
 
 	@Bean
-	public CommandLineRunner reactiveDatabaseExample(VehicleReactiveService vehicleReactiveService) {
+	public CommandLineRunner reactiveDatabaseExample(CarReactiveService carReactiveService, BikeReactiveService bikeReactiveService) {
 		return args -> {
 
-			List<Vehicle> vehicles = Arrays.asList(
-					new Vehicle("Ford", "Mustang", "Red"),
-					new Vehicle("Ford", "Bronco", "Orange"),
-					new Vehicle("Chevy", "Silverado", "Blue"),
-					new Vehicle("Chevy", "Tahoe", "Black"),
-					new Vehicle("Toyota", "Supra", "Green")
-			);
+			generateCars(carReactiveService);
 
-			System.out.println("Create some vehicles and insert them into the database, blocking for up to 5 seconds");
-			vehicleReactiveService
-					.saveAll(vehicles)
-					.blockLast(Duration.ofSeconds(5));
+			generateBikes(bikeReactiveService);
 
 		};
+	}
+
+	private void generateBikes(BikeReactiveService bikeReactiveService) {
+		List<Bike> bikes = Arrays.asList(
+				new Bike("Royal Enfield", "Bullet", "Teal"),
+				new Bike("Triumph", "Bonneville", "Silver"),
+				new Bike("Harley Davidson", "XR750", "Red"),
+				new Bike("Harley Davidson", "VRod", "Steel"),
+				new Bike("Triumph", "Speed Twin", "Red")
+		);
+
+		System.out.println("Create some bikes and insert them into the database, blocking for up to 2 seconds");
+		bikeReactiveService.saveAll(bikes)
+				.blockLast(Duration.ofSeconds(2L));
+	}
+
+	private void generateCars(CarReactiveService carReactiveService) {
+		List<Car> cars = Arrays.asList(
+				new Car("Ford", "Mustang", "Red"),
+				new Car("Ford", "Bronco", "Orange"),
+				new Car("Chevy", "Silverado", "Blue"),
+				new Car("Chevy", "Tahoe", "Black"),
+				new Car("Toyota", "Supra", "Green")
+		);
+
+		System.out.println("Create some cars and insert them into the database, blocking for up to 2 seconds");
+		carReactiveService.saveAll(cars)
+				.blockLast(Duration.ofSeconds(2L));
 	}
 
 
