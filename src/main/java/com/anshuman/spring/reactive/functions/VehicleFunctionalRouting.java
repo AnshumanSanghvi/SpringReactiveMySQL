@@ -3,6 +3,7 @@ package com.anshuman.spring.reactive.functions;
 
 import com.anshuman.spring.reactive.model.Vehicle;
 import com.anshuman.spring.reactive.repository.VehicleReactiveRepository;
+import com.anshuman.spring.reactive.filters.ProtectedIdHandlerFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +36,9 @@ public class VehicleFunctionalRouting {
         // The second parameter defines a handler function that'll be used if the predicate applies.
         return route(GET(byIdVar.getPath()),
                 req -> ok().body(
-                        vehicleRepository.findById(Integer.parseInt(req.pathVariable("id"))), Vehicle.class));
+                        vehicleRepository.findById(Integer.parseInt(req.pathVariable("id"))), Vehicle.class))
+                // adding a custom filter to handler functions.
+                .filter(new ProtectedIdHandlerFilter());
     }
 
     // RouterFunction that publishes a Vehicle collection resource:
