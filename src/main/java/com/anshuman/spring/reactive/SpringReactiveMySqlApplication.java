@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @SpringBootApplication
 @Slf4j
+@EnableAspectJAutoProxy
 public class SpringReactiveMySqlApplication {
 
 	public static void main(String[] args) {
@@ -32,7 +34,7 @@ public class SpringReactiveMySqlApplication {
 					new Vehicle("Toyota", "Supra", "Green")
 			);
 
-			log.debug("Create some vehicles and insert them into the database, blocking for up to 5 seconds");
+			System.out.println("Create some vehicles and insert them into the database, blocking for up to 5 seconds");
 			vehicleReactiveService
 					.saveAll(vehicles)
 					.blockLast(Duration.ofSeconds(5));
