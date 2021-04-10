@@ -54,7 +54,7 @@ class VehicleFunctionalRoutingTest {
         given(vehicleRepository.findById(1)).willReturn(Mono.just(vehicle));
 
         client.get()
-                .uri(byId.getPath() +"1")
+                .uri(uriBuilder -> uriBuilder.path(byId.getPath()).build(1))
                 .exchange()
                 .expectStatus()
                 .isOk()
