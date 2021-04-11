@@ -24,7 +24,9 @@ public class BikeReactiveService {
         return bikeReactiveRepository
                 .saveAll(bikes)
                 .log("saved bike on thread=" + Thread.currentThread().getName(),
-                        Level.INFO, SignalType.ON_NEXT);
+                        Level.INFO, SignalType.ON_NEXT)
+                // handle errors in reactive streams with doOnError to get debugging information
+                .doOnError(error -> log.error("Error occurred in flux while saving Bike", error));
     }
 
     public Flux<Bike> findAll()
@@ -33,6 +35,7 @@ public class BikeReactiveService {
         return bikeReactiveRepository
                 .findAll()
                 .log("found bike on thread=" + Thread.currentThread().getName(),
-                        Level.INFO, SignalType.ON_NEXT);
+                        Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while fetching Bike", error));
     }
 }

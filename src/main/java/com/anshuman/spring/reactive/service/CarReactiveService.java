@@ -26,6 +26,7 @@ public class CarReactiveService
         log.trace("Saving car={} via repository on thread={}", car, Thread.currentThread().getName());
         return carReactiveRepository
                 .save(car)
+                // log each element
                 .log("saved car", Level.INFO, SignalType.ON_NEXT);
     }
 
@@ -35,7 +36,8 @@ public class CarReactiveService
         return carReactiveRepository
                 .saveAll(cars)
                 .log("saved car on thread=" + Thread.currentThread().getName(),
-                Level.INFO, SignalType.ON_NEXT);
+                Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while saving Car", error));
     }
 
     public Flux<Car> findByMake(String make)
@@ -44,7 +46,8 @@ public class CarReactiveService
         return carReactiveRepository
                 .findByMake(make)
                 .log("found car by make on thread=" + Thread.currentThread().getName(),
-                Level.INFO, SignalType.ON_NEXT);
+                Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while finding Car by make", error));
     }
 
     // We wrap a single Car resource in a Mono because we return at most one employee.
@@ -52,7 +55,8 @@ public class CarReactiveService
     {
         log.trace("finding car by id={} via repository on thread={}", id, Thread.currentThread().getName());
         return carReactiveRepository.findById(id).log("found car by id on thread=" + Thread.currentThread().getName(),
-                Level.INFO, SignalType.ON_NEXT);
+                Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while finding Car by Id", error));
     }
 
     // For the collection resource, we use a Flux of type Car – since that's the publisher for 0..n elements.
@@ -62,7 +66,8 @@ public class CarReactiveService
         return carReactiveRepository
                 .findAll()
                 .log("found car on thread=" + Thread.currentThread().getName(),
-                Level.INFO, SignalType.ON_NEXT);
+                Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while finding all Cars", error));
     }
 
     public Flux<Car> findByModel(String model)
@@ -70,7 +75,8 @@ public class CarReactiveService
         log.trace("finding car by model={} via repository on thread={}", model, Thread.currentThread().getName());
         return carReactiveRepository.findByModel(model)
                 .log("found car on thread=" + Thread.currentThread().getName(),
-                Level.INFO, SignalType.ON_NEXT);
+                Level.INFO, SignalType.ON_NEXT)
+                .doOnError(error -> log.error("Error occurred in flux while finding Car by model", error));
     }
 
 
@@ -80,7 +86,8 @@ public class CarReactiveService
         return Flux.merge(findByMake(make), findByModel(model))
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .ordered((v1, v2) -> v2.getId() - v1.getId());
+                .ordered((v1, v2) -> v2.getId() - v1.getId())
+                .doOnError(error -> log.error("Error occurred in flux while finding Car by make or model", error));
     }
 
 
