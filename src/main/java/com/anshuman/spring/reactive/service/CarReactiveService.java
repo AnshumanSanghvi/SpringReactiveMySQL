@@ -4,7 +4,6 @@ import com.anshuman.spring.reactive.model.Car;
 import com.anshuman.spring.reactive.repository.CarReactiveRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,7 +20,7 @@ public class CarReactiveService
 
     private final CarReactiveRepository carReactiveRepository;
 
-    public Mono<Car> save(@NotNull Car car)
+    public Mono<Car> save(Car car)
     {
         log.trace("Saving car={} via repository on thread={}", car, Thread.currentThread().getName());
         return carReactiveRepository
@@ -30,7 +29,7 @@ public class CarReactiveService
                 .log("saved car", Level.INFO, SignalType.ON_NEXT);
     }
 
-    public Flux<Car> saveAll(@NotNull Iterable<Car> cars)
+    public Flux<Car> saveAll(Iterable<Car> cars)
     {
         log.trace("Saving cars={} via repository on thread={}", cars, Thread.currentThread().getName());
         return carReactiveRepository

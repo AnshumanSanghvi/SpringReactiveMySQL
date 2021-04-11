@@ -4,7 +4,6 @@ import com.anshuman.spring.reactive.model.Car;
 import com.anshuman.spring.reactive.service.CarReactiveService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,7 +61,7 @@ public class CarReactiveResource
     }
 
     @PostMapping("/car")
-    public Mono<Car> save(@RequestBody @NotNull final Car car)
+    public Mono<Car> save(@RequestBody final Car car)
     {
         log.debug("saving car={}", car);
         Mono<Car> carMono = carReactiveService.save(car);
