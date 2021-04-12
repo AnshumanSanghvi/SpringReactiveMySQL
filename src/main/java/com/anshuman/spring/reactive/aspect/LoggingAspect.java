@@ -26,7 +26,7 @@ public class LoggingAspect {
 
         final StopWatch stopWatch = new StopWatch();
 
-        log.debug("Entered {}.{} thread={}", className, methodName, Thread.currentThread().getName());
+        log.trace("Entered {}.{} thread={}", className, methodName, Thread.currentThread().getName());
 
         //Measure method execution time
         stopWatch.start();
@@ -34,7 +34,7 @@ public class LoggingAspect {
         stopWatch.stop();
 
         //Log method execution time
-        log.debug("Exited {}.{} with executionTime={}ms", className, methodName, stopWatch.getTotalTimeMillis());
+        log.trace("Exited {}.{} with executionTime={}ms", className, methodName, stopWatch.getTotalTimeMillis());
 
         return result;
     }
