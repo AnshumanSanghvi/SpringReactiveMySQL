@@ -5,12 +5,15 @@ import com.anshuman.spring.reactive.filters.ProtectedIdHandlerFilter;
 import com.anshuman.spring.reactive.model.Car;
 import com.anshuman.spring.reactive.repository.CarReactiveRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
+
+import java.util.Optional;
 
 import static com.anshuman.spring.reactive.Constants.Endpoint.all;
 import static com.anshuman.spring.reactive.Constants.Endpoint.byIdVar;
@@ -25,6 +28,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 // Creates routes using RouterFunction to publish and consume our reactive streams of Cars.
 @Configuration
 @AllArgsConstructor
+@Slf4j
 public class CarFunctionalRouting {
 
     private final CarReactiveRepository carRepository;
@@ -55,9 +59,15 @@ public class CarFunctionalRouting {
 
         return route(GET(byMakeVar.getPath()),
                 req -> {
-                    Flux<Car> carFlux = carRepository.findByMake(req.pathVariable("make"));
-                    // return http status 404 not found using Flux.hasElements() method to check if the flux has data.
-                    return carFlux.hasElements()
+                    String make = req.pathVariable("make");
+                    Flux<Car> carFlux = carRepository.findByMake(make);
+                    return carFlux
+                            // return http status 404 not found using Flux.hasElements() method to check if the flux has data.
+                            .hasElements()
+                            .doOnEach(hasElements ->
+                                    log.trace("{} found for make={}",
+                                            Optional.ofNullable(hasElements.get()).orElse(false) ? "Cars" : "No Cars",
+                                            make))
                             .flatMap(hasElements -> hasElements ? ok().body(carFlux, Car.class) : notFound().build());
                 }
         );
