@@ -25,14 +25,14 @@ public class StreamEventResource {
     // To create an SSE streaming endpoint, we'll have to follow the W3C specifications and designate its MIME type as text/event-stream:
     @GetMapping(path = "/produce/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> produceStreamFlux() {
-        return Flux.interval(Duration.ofSeconds(2))
+        return Flux.interval(Duration.ofSeconds(1))
                 .map(sequence -> "Flux - " + LocalTime.now().toString());
     }
 
     // To create SSE without MIME type, wrap it in a ServerSentEvent Object. This also allows specifying metadata for the object.
     @GetMapping("/produce/stream-sse")
     public Flux<ServerSentEvent<String>> produceSSE() {
-        return Flux.interval(Duration.ofSeconds(2))
+        return Flux.interval(Duration.ofSeconds(1))
                 .map(sequence -> ServerSentEvent.<String> builder()
                         .id(String.valueOf(sequence))
                         .event("periodic-event")
@@ -40,7 +40,7 @@ public class StreamEventResource {
                         .build());
     }
 
-    @GetMapping(path = "/consume/stream-flux", consumes = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping("/consume/stream-flux")
     public void consumeStreamFlux()
     {
         sseWebClient.consumeFlux();
