@@ -89,7 +89,7 @@ class CarFunctionalRoutingTest {
     @Order(3)
     public void whenUpdateCar_thenCarUpdated() {
         WebTestClient client = WebTestClient
-                .bindToRouterFunction(carRouting.updateCarRoute())
+                .bindToRouterFunction(carRouting.createUpdateCarRoute())
                 .build();
 
         Car car = new Car(1, "Ford", "Mustang", "Red");
