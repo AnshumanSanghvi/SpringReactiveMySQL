@@ -1,4 +1,4 @@
-package com.anshuman.spring.reactive.webclient.config;
+package com.anshuman.spring.reactive.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -19,20 +19,21 @@ import java.util.concurrent.TimeUnit;
 public class WebClientConfig {
 
     public static final int TIMEOUT = 5000;
+    private static final String URL = "http://localhost:8080";
 
     @Bean
     public WebClient getWebClient()
     {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
-                .responseTimeout(Duration.ofMillis(5000))
+                .responseTimeout(Duration.ofMillis(TIMEOUT))
                 .doOnConnected(conn ->
                         conn.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS))
                                 .addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS)));
 
-        // // WebClient introduced in Spring 5 is a non-blocking client with support for reactive streams.
+        // WebClient introduced in Spring 5 is a non-blocking client with support for reactive streams.
         return WebClient.builder()
-                .baseUrl("http://localhost:8080")
+                .baseUrl(URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
