@@ -32,6 +32,16 @@ public class CarReactiveResource
         return carFlux;
     }
 
+    @GetMapping(value = "/car/model/{model}")
+    public Flux<Car> findByModel(@PathVariable final String model)
+    {
+        log.debug("Finding cars by model={}", model);
+        Flux<Car> carFlux = carReactiveService.findByModel(model);
+
+        log.info("completed request for finding cars by model={}", model);
+        return carFlux;
+    }
+
     @GetMapping("/car/id/{id}")
     public Mono<Car> findById(@PathVariable final int id)
     {
