@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class CarReactiveResource {
     private final CarReactiveService carReactiveService;
 
     @PostMapping("/cars/default")
-    public void generateCars() {
+    public Flux<Car> generateCars() {
         List<Car> cars = Arrays.asList(
                 new Car("Ford", "Mustang", "Red"),
                 new Car("Ford", "Bronco", "Orange"),
@@ -34,8 +33,7 @@ public class CarReactiveResource {
         );
 
         log.info("Create some cars and insert them into the database, blocking for up to 2 seconds");
-        carReactiveService.saveAll(cars)
-                .blockLast(Duration.ofSeconds(2L));
+        return carReactiveService.saveAll(cars);
     }
 
     @GetMapping(value = "/car/make/{make}")

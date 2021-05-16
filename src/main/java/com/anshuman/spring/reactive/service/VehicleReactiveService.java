@@ -24,6 +24,7 @@ public class VehicleReactiveService {
         Flux<Bike> bikes = bikeReactiveService.findAll().subscribeOn(Schedulers.boundedElastic());
 
         return Flux.zip(cars, bikes, Vehicle::new)
+                .doOnEach(vehicle -> log.debug("vehicle: {}", vehicle))
                 .doOnError(error -> log.error("Error occurred in flux while finding Vehicle by Id", error));
     }
 

@@ -17,7 +17,7 @@ public class RequestLoggingWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {
         ServerHttpRequest request = serverWebExchange.getRequest();
-        log.trace("Request: path={}, params={}, remoteAddress={}", request.getPath().toString(), request.getQueryParams(),
+        log.trace("Request: path={}, params={}, remoteAddress={}", request.getPath(), request.getQueryParams(),
                 Optional.ofNullable(request.getRemoteAddress()).map(String::valueOf).orElse(""));
         return webFilterChain.filter(serverWebExchange);
     }
