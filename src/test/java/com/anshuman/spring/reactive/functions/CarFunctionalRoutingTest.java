@@ -4,7 +4,6 @@ import com.anshuman.spring.reactive.SpringReactiveMySqlApplication;
 import com.anshuman.spring.reactive.model.Car;
 import com.anshuman.spring.reactive.repository.CarReactiveRepository;
 import com.anshuman.spring.reactive.service.CarReactiveService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -25,12 +24,10 @@ import static com.anshuman.spring.reactive.Constants.Endpoint.all;
 import static com.anshuman.spring.reactive.Constants.Endpoint.byId;
 import static com.anshuman.spring.reactive.Constants.Endpoint.save;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = SpringReactiveMySqlApplication.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled // to run the tests, remove the command line runner bean from main App.
 class CarFunctionalRoutingTest {
 
     @Autowired
@@ -54,7 +51,7 @@ class CarFunctionalRoutingTest {
         given(carRepository.findById(1)).willReturn(Mono.just(car));
 
         client.get()
-                .uri(uriBuilder -> uriBuilder.path(byId.getPath()).build(1))
+                .uri(uriBuilder -> uriBuilder.path(byId.getPath() + "1").build())
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -94,6 +91,8 @@ class CarFunctionalRoutingTest {
 
         Car car = new Car(1, "Ford", "Mustang", "Red");
 
+        given(carRepository.save(car)).willReturn(Mono.just(car));
+
         client.post()
                 .uri(save.getPath())
                 .body(Mono.just(car), Car.class)
@@ -101,7 +100,6 @@ class CarFunctionalRoutingTest {
                 .expectStatus()
                 .isOk();
 
-        verify(carRepository).save(car);
     }
 
     @Test
